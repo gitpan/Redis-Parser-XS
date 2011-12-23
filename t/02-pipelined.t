@@ -39,6 +39,26 @@ my @IN = (
       "\$-1"       . $CRLF .
       "\$4"        . $CRLF .
       "fooo"       . $CRLF  => [ '*', ['bar', undef, 'fooo'] ] ], 
+
+    [ "*4"         . $CRLF .
+      "\$3"        . $CRLF .
+      "bar"        . $CRLF .
+      ":123"       . $CRLF .
+      "\$-1"       . $CRLF .
+      "\$4"        . $CRLF .
+      "fooo"       . $CRLF  => [ '*', ['bar', [':', '123'], undef, 'fooo'] ] ], 
+
+    [ "*5"         . $CRLF .
+      "\$3"        . $CRLF .
+      "bar"        . $CRLF .
+      "-ERR"       . $CRLF .
+      "+OK"        . $CRLF .
+      "\$-1"       . $CRLF .
+      "\$4"        . $CRLF .
+      "fooo"       . $CRLF  => [ '*', ['bar', ['-', 'ERR'], ['+', 'OK'], 
+                                undef, 'fooo'] ] ], 
+
+
 );
 
 
@@ -66,9 +86,13 @@ for my $size (1..50) {
     }
 
     my $reply = [ map { $_->[1] } reverse @IN ];
+
+    ok  length ($buf) == 0,    'parsed entire buffer'
+        or
+            diag ($buf), BAIL_OUT('');
    
     is_deeply  $out, $reply,   'reply'
         or 
-            diag Dumper ($out, $reply);
+            diag Dumper ($out, $reply), BAIL_OUT('');
 }
 
